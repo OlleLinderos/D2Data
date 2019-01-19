@@ -1,5 +1,6 @@
 /target
 /resources
+*.css
 /classes
 /checkouts
 profiles.clj
