@@ -19,6 +19,12 @@ body {
 .app-head {
     padding: 100px 0 20px;
     border-bottom: 1px solid #ddd;
+    h1 {
+        cursor: pointer;
+        &:hover {
+            color: #565656;
+        }
+    }
 }
 
 .app-body {
@@ -55,7 +61,7 @@ body {
 .search-results {
     .results-list {
         display: grid;
-        grid-auto-rows: 100px;
+        grid-auto-rows: 80px;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         grid-gap: 10px;
         .user {
@@ -65,6 +71,7 @@ body {
             align-items: center;
             border-radius: 2px;
             border: 1px solid #ccc;
+            overflow: hidden;
             &:hover {
                 background: #ccc;
                 cursor: pointer;

@@ -10,22 +10,35 @@
 ;; All state goes here
 
 (defonce app-state
-  (r/atom {:search false
-           :loading false
-           :results []}))
+  (r/atom {:state "search"
+           :users []
+           :matches []
+           :match-wins []}))
 
+(defn reset-state []
+  (swap! app-state assoc :state "search")
+  (swap! app-state assoc :users [])
+  (swap! app-state assoc :matches [])
+  (swap! app-state assoc :match-wins []))
 
 ;; -------------------------
 ;; Fetch data from opendota API
 
-(defn find-steam-profile [query]
-  (swap! app-state assoc :loading true)
-  (swap! app-state assoc :search true)
+(defn get-steam-profiles [query]
+  (swap! app-state assoc :state "loading")
   (go (let [response (<! (http/get (str "https://api.opendota.com/api/search?q=" query)))]
-        (prn (:body response))
-        (swap! app-state assoc :loading false)
-        (swap! app-state assoc-in [:results] (:body response)))))
+        (swap! app-state assoc :state "users")
+        (swap! app-state assoc-in [:users] (:body response)))))
 
+(defn get-matches [query]
+  (swap! app-state assoc :state "loading")
+  (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches")))]
+        (swap! app-state assoc :state "matches")
+        (swap! app-state assoc-in [:matches] (:body response)))))
+
+(defn get-won-matches [query]
+  (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches?win=1")))]
+        (swap! app-state assoc-in [:match-wins] (:body response)))))
 
 ;; -------------------------
 ;; Utility functions
@@ -42,39 +55,57 @@
 ;; -------------------------
 ;; Components
 
-(defn search-form []
-  (fn []
-    [:div.search-form
-     [:h2 "Search for profile"]
-     [:form
-      [:input {:type "text" :placeholder "Your Steam username..."}]
-      [:input {:type "button" :value "Search" :on-click #(find-steam-profile "Boat")}]]]))
+(defn username-input [value]
+  [:input {:name "username"
+           :placeholder "Enter your Steam username"
+           :required "required"
+           :type "text"
+           :value @value
+           :on-change #(reset! value (-> % .-target .-value))}])
 
-(defn search-results []
+(defn user-search-form []
+  (let [steam-username (r/atom "")]
+    (fn []
+      [:div.search-form
+       [:h2 "Find your profile"]
+       [:form
+        [username-input steam-username]
+        [:input {:type "button" :value "Search" :on-click #(get-steam-profiles @steam-username)}]]])))
+
+(defn user-search-results []
   (fn []
-    (if (true? (get @app-state :loading))
-      [:p "Loading..."]
-      [:div.search-results
-       [:h2 "Select your account"]
-       [:ul.results-list
-        (for [user (sort-by-recency (:results @app-state))]
-          ^{:key user} [:li.user 
-                        [:img.user-img {:src (user :avatarfull)}]
-                        [:div.user-info
-                         [:p (user :personaname)]
-                         [:p (str (how-long-ago? (user :last_match_time)) " days ago")]]])]])))
+    [:div.search-results
+     [:h2 "Select your account"]
+     [:ul.results-list
+      (for [user (sort-by-recency (:users @app-state))]
+        ^{:key user} [:li.user {:on-click #(get-matches (user :account_id))}
+                      [:img.user-img {:src (user :avatarfull)}]
+                      [:div.user-info
+                       [:p (user :personaname)]
+                       [:p (str (how-long-ago? (user :last_match_time)) " days ago")]]])]]))
+
+(defn matches-component []
+  (fn []
+    [:ol
+     (for [match (:matches @app-state)]
+       ^{:key match} [:li (str match)])]))
+
+(defn loading-component []
+  [:p "Loading"])
 
 (defn header []
   (fn []
     [:header.app-head
-     [:h1 "Dota Graph"]]))
+     [:h1 {:on-click #(reset-state)} "D2Data"]]))
 
 (defn body []
   (fn []
     [:div.app-body
-     (if (false? (get @app-state :search))
-       [search-form]
-       [search-results])]))
+     (case (get @app-state :state)
+       "search" [user-search-form]
+       "users" [user-search-results]
+       "matches" [matches-component]
+       "loading" [loading-component])]))
 
 (defn app []
   (fn []
