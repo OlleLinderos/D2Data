@@ -58,11 +58,11 @@
        [:h2 "Select your account"]
        [:ul.results-list
         (for [user (sort-by-recency (:results @app-state))]
-          [:li.user {:key (user :account_id)}
-           [:img.user-img {:src (user :avatarfull)}]
-           [:div.user-info
-            [:p (user :personaname)]
-            [:p (str (how-long-ago? (user :last_match_time)) " days ago")]]])]])))
+          ^{:key user} [:li.user 
+                        [:img.user-img {:src (user :avatarfull)}]
+                        [:div.user-info
+                         [:p (user :personaname)]
+                         [:p (str (how-long-ago? (user :last_match_time)) " days ago")]]])]])))
 
 (defn header []
   (fn []
