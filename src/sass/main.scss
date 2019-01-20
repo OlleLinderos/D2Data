@@ -1,0 +1,53 @@
+@import 'reset';
+@import 'typography';
+
+$success: #03a506;
+
+body {
+    background: #f9f9f9;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+}
+
+#wrap {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.app-head {
+    padding: 100px 0 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.app-body {
+    padding: 40px 0;
+
+}
+
+.search-form {
+    input {
+        margin: 15px 0;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        outline: none;
+        &[type="text"] {
+            width: 380px;
+            padding: 15px;
+            border-right: 0;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        &[type="button"] {
+            background: $success;
+            border-color: $success;
+            color: #fff;
+            padding: 15px 30px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+}
