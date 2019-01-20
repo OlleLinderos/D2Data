@@ -23,11 +23,11 @@
         (swap! app-state assoc-in [:results] (:body response)))))
 
 (defn how-long-ago? [date]
-  (+ (Math/floor
-      (/ (- (js/Date.)
-            (js/Date. date))
-         (* 1000 60 60 24)))
-     " days ago"))
+  (str (Math/floor
+        (/ (- (js/Date.)
+              (js/Date. date))
+           (* 1000 60 60 24)))
+       " days ago"))
 
 ;; -------------------------
 ;; Page components
@@ -40,8 +40,8 @@
 (defn body []
   (fn []
     [:div.app-body
-     [search-form]
-     (if (true? (get @app-state :search))
+     (if (false? (get @app-state :search))
+       [search-form]
        [search-results])]))
 
 (defn search-form []
@@ -54,17 +54,17 @@
 
 (defn search-results []
   (fn []
-    [:div
-     (if (true? (get @app-state :loading))
-       [:p "Loading..."]
-       [:div
-        [:h2 "Search Results"]
-        [:ul
-         (for [user (:results @app-state)]
-           [:li
-            [:img {:src (user :avatarfull)}]
+    (if (true? (get @app-state :loading))
+      [:p "Loading..."]
+      [:div.search-results
+       [:h2 "Select your account"]
+       [:ul.results-list
+        (for [user (:results @app-state)]
+          [:li.user
+           [:img.user-img {:src (user :avatarfull)}]
+           [:div.user-info
             [:p (user :personaname)]
-            [:p (how-long-ago? (user :last_match_time))]])]])]))
+            [:p (how-long-ago? (user :last_match_time))]]])]])))
 
 (defn app []
   (fn []
