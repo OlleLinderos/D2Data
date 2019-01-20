@@ -1,48 +1,18 @@
 (ns dota-stats.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [reagent.core :as r]
-            [reagent.session :as session]
-            [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]))
-
-
+  (:require [dota-stats.data]
+            [reagent.core :as r]
+            [reagent.session :as session]))
 
 ;; -------------------------
-;; State
+;; All state goes here
+
 (defonce app-state
   (r/atom {:search false
            :loading false
            :results []}))
 
-;; HTTP
-(defn find-steam-profile []
-  (swap! app-state assoc :search true)
-  (swap! app-state assoc :loading true)
-  (go (let [response (<! (http/get "https://api.opendota.com/api/search?q=Boat"))]
-        (swap! app-state assoc :loading false)
-        (swap! app-state assoc-in [:results] (:body response)))))
-
-(defn how-long-ago? [date]
-  (str (Math/floor
-        (/ (- (js/Date.)
-              (js/Date. date))
-           (* 1000 60 60 24)))
-       " days ago"))
-
 ;; -------------------------
-;; Page components
-
-(defn header []
-  (fn []
-    [:header.app-head
-     [:h1 "Dota Graph"]]))
-
-(defn body []
-  (fn []
-    [:div.app-body
-     (if (false? (get @app-state :search))
-       [search-form]
-       [search-results])]))
+;; Components
 
 (defn search-form []
   (fn []
@@ -66,6 +36,18 @@
             [:p (user :personaname)]
             [:p (how-long-ago? (user :last_match_time))]]])]])))
 
+(defn header []
+  (fn []
+    [:header.app-head
+     [:h1 "Dota Graph"]]))
+
+(defn body []
+  (fn []
+    [:div.app-body
+     (if (false? (get @app-state :search))
+       [search-form]
+       [search-results])]))
+
 (defn app []
   (fn []
     [:div#wrap
@@ -73,7 +55,7 @@
      [body]]))
 
 ;; -------------------------
-;; Initialize app
+;; Initialize the app
 
 (defn init! []
   (r/render [app] (.getElementById js/document "app")))
