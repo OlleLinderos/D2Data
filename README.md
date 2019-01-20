@@ -1,3 +1,5 @@
-# Dota 2 Statistics
+# Dota Graph
+Fetch and display statistics for a Dota 2 account
 
-A SPA to fetch and display lifetime statistics for Dota 2
+## Development (in Emacs)
+Run `cider-jack-in-clojurescript` in Emacs, and `lein sass4clj auto` for the styling.

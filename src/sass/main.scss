@@ -13,6 +13,7 @@ body {
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
+    padding: 0 15px;
 }
 
 .app-head {
@@ -53,16 +54,15 @@ body {
 
 .search-results {
     .results-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        display: grid;
+        grid-auto-rows: 100px;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-gap: 10px;
         .user {
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
-            width: 285px;
-            margin: 10px 0;
             border-radius: 2px;
             border: 1px solid #ccc;
             &:hover {
@@ -70,7 +70,7 @@ body {
                 cursor: pointer;
             }
             img {
-                width: 90px;
+                height: 100%;
             }
             .user-info {
                 padding: 20px;
