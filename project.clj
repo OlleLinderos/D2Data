@@ -1,5 +1,5 @@
 (defproject dota-stats "0.1.0-SNAPSHOT"
-  :description "A little SPA for displaying Dota 2 statistics"
+  :description "Dota2 Data Analysis"
   :url "https://ollelinderos.com/"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
