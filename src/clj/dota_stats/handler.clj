@@ -13,12 +13,13 @@
    [:meta {:charset "utf-8"}]
    [:meta {:name "viewport"
            :content "width=device-width, initial-scale=1"}]
-   (include-css (if (env :dev) "/css/site.css" "/css/site.min.css"))])
+   (include-css (if (env :dev) "/css/main.css" "/css/main.min.css"))
+   (include-css "https://fonts.googleapis.com/css?family=Montserrat:400,700")])
 
 (defn loading-page []
   (html5
    (head)
-   [:body {:class "body-container"}
+   [:body
     mount-target
     (include-js "/js/app.js")]))
 
