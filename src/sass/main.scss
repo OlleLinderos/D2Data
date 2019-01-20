@@ -11,7 +11,7 @@ body {
 
 #wrap {
     width: 100%;
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
@@ -27,7 +27,6 @@ body {
 
 .search-form {
     input {
-        margin: 15px 0;
         display: inline-block;
         font-size: 16px;
         border-radius: 4px;
@@ -50,4 +49,33 @@ body {
         }
     }
 
+}
+
+.search-results {
+    .results-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        .user {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            width: 285px;
+            margin: 10px 0;
+            border-radius: 2px;
+            border: 1px solid #ccc;
+            &:hover {
+                background: #ccc;
+                cursor: pointer;
+            }
+            img {
+                width: 90px;
+            }
+            .user-info {
+                padding: 20px;
+                line-height: 1.6;
+            }
+        }
+    }
 }
