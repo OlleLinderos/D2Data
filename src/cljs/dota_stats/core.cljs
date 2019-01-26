@@ -11,7 +11,12 @@
            :required "required"
            :type "text"
            :value @value
-           :on-change #(reset! value (-> % .-target .-value))}])
+           :on-change #(reset! value (-> % .-target .-value))
+           :on-key-press (fn [e]
+                           (if (= (.-key e) "Enter")
+                             (do
+                               (.preventDefault e)
+                               (data/get-steam-profiles @value))))}])
 
 (defn user-search-form []
   (let [steam-username (r/atom "")]
