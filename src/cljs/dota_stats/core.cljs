@@ -1,59 +1,9 @@
 (ns dota-stats.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]
+  (:require [dota-stats.state :as state]
+            [dota-stats.utility :as util]
+            [dota-stats.data :as data]
             [reagent.core :as r]
             [reagent.session :as session]))
-
-
-;; -------------------------
-;; All state goes here
-
-(defonce app-state
-  (r/atom {:state "search"
-           :users []
-           :matches []
-           :match-wins []}))
-
-(defn reset-state []
-  (swap! app-state assoc :state "search")
-  (swap! app-state assoc :users [])
-  (swap! app-state assoc :matches [])
-  (swap! app-state assoc :match-wins []))
-
-;; -------------------------
-;; Fetch data from opendota API
-
-(defn get-steam-profiles [query]
-  (swap! app-state assoc :state "loading")
-  (go (let [response (<! (http/get (str "https://api.opendota.com/api/search?q=" query)))]
-        (swap! app-state assoc :state "users")
-        (swap! app-state assoc-in [:users] (:body response)))))
-
-(defn get-matches [query]
-  (swap! app-state assoc :state "loading")
-  (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches")))]
-        (swap! app-state assoc :state "matches")
-        (swap! app-state assoc-in [:matches] (:body response)))))
-
-(defn get-won-matches [query]
-  (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches?win=1")))]
-        (swap! app-state assoc-in [:match-wins] (:body response)))))
-
-;; -------------------------
-;; Utility functions
-
-(defn how-long-ago? [date]
-  (Math/floor
-   (/ (- (js/Date.)
-         (js/Date. date))
-      (* 1000 60 60 24)))) 
-
-(defn sort-by-recency [vec]
-  (reverse (sort-by :last_match_time vec)))
-
-;; -------------------------
-;; Components
 
 (defn username-input [value]
   [:input {:name "username"
@@ -70,24 +20,24 @@
        [:h2 "Find your profile"]
        [:form
         [username-input steam-username]
-        [:input {:type "button" :value "Search" :on-click #(get-steam-profiles @steam-username)}]]])))
+        [:input {:type "button" :value "Search" :on-click #(data/get-steam-profiles @steam-username)}]]])))
 
 (defn user-search-results []
   (fn []
     [:div.search-results
      [:h2 "Select your account"]
      [:ul.results-list
-      (for [user (sort-by-recency (:users @app-state))]
-        ^{:key user} [:li.user {:on-click #(get-matches (user :account_id))}
+      (for [user (util/sort-by-recency (:users @state/app-state))]
+        ^{:key user} [:li.user {:on-click #(data/get-matches (user :account_id))}
                       [:img.user-img {:src (user :avatarfull)}]
                       [:div.user-info
                        [:p (user :personaname)]
-                       [:p (str (how-long-ago? (user :last_match_time)) " days ago")]]])]]))
+                       [:p (str (util/how-long-ago? (user :last_match_time)) " days ago")]]])]]))
 
 (defn matches-component []
   (fn []
     [:ol
-     (for [match (:matches @app-state)]
+     (for [match (:matches @state/app-state)]
        ^{:key match} [:li (str match)])]))
 
 (defn loading-component []
@@ -96,12 +46,12 @@
 (defn header []
   (fn []
     [:header.app-head
-     [:h1 {:on-click #(reset-state)} "D2Data"]]))
+     [:h1 {:on-click #(state/reset-state)} "D2Data"]]))
 
 (defn body []
   (fn []
     [:div.app-body
-     (case (get @app-state :state)
+     (case (get @state/app-state :state)
        "search" [user-search-form]
        "users" [user-search-results]
        "matches" [matches-component]
@@ -112,7 +62,6 @@
     [:div#wrap
      [header]
      [body]]))
-
 
 ;; -------------------------
 ;; Initialize the app

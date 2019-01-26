@@ -17,8 +17,6 @@
                   :scope "provided"]
                  [metosin/reitit "0.2.10"]]
 
-  :npm-deps {:recharts "1.4.2"}
-
   :plugins [[lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.7"]
             [lein-asset-minifier "0.2.7"
