@@ -57,13 +57,10 @@
                                                         :autoSkip false}}]}
                               :legend {:display false}}
                     :data {:labels (map #(str "Game #" (+ 1 %))
-                                        (vec
-                                         (range
-                                          (count
-                                           (util/calc-winrate
-                                            (util/merge-results
-                                             (:wins @state/app-state)
-                                             (:losses @state/app-state)))))))
+                                        (vec (range (count (util/calc-winrate
+                                                            (util/merge-results
+                                                             (:wins @state/app-state)
+                                                             (:losses @state/app-state)))))))
                            :datasets [{:fill false
                                        :pointRadius 0
                                        :pointHitRadius 5
