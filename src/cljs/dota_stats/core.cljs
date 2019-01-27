@@ -45,9 +45,7 @@
 (defn setup-winrate-chart []
   (let [context (.getContext (.getElementById js/document "winrate-chart") "2d")
         chart-data {:type "line"
-                    :options {:title {:display false
-                                      :text "Winrate over time"}
-                              :responsive true
+                    :options {:responsive true
                               :scales {:yAxes [{:display true
                                                 :ticks {:min 0
                                                         :max 100
@@ -56,18 +54,28 @@
                                                 :unitStepSize 1
                                                 :ticks {:autoSkip false
                                                         :beginAtZero true}}]}}
-                    :data {:labels [1 2 3 4 5 6]
-                           :datasets [{:label "Actual winrate"
-                                       :data [0 10 20 55]}
-                                      {:label "Derivate"
-                                       :data [0 90 55 0]}]}}]
+                    :data {:labels (vec (range (count (util/calc-winrate
+                                                       (util/merge-results
+                                                        (:wins @state/app-state) (:losses @state/app-state))))))
+                           :datasets [{:fill false
+                                       :pointRadius 0
+                                       :borderColor "#FF9900"
+                                       :backgroundColor "#FF9900"
+                                       :label "Winrate"
+                                       :data (util/calc-winrate
+                                              (util/merge-results
+                                               (:wins @state/app-state) (:losses @state/app-state)))}]}}]
     (js/Chart. context (clj->js chart-data))))
 
 (defn winrate-chart []
-  (r/create-class
-   {:component-did-mount #(setup-winrate-chart)
-    :reagent-render (fn []
-                      [:canvas {:id "winrate-chart" :width "700" :height "380"}])}))    
+  (if (< 0
+         (count (util/calc-winrate
+                 (util/merge-results
+                  (:wins @state/app-state) (:losses @state/app-state)))))
+    (r/create-class
+     {:component-did-mount #(setup-winrate-chart)
+      :reagent-render (fn []
+                        [:canvas {:id "winrate-chart" :width "700" :height "380"}])})))
 
 (defn loading-component []
   [:p "Loading"])
