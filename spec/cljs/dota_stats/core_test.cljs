@@ -34,8 +34,8 @@
           false))))
 
 
-(describe "test home"
-  (it "contains 'Welcome to' in home page"
+(describe "test app init"
+  (it "contains an app'"
       (with-mounted-component (rc/app)
         (fn [c div]
-          (should (found-in #"Welcome to" div))))))
+          (should (found-in #"D2Data" div))))))
