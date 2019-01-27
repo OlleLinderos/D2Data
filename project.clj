@@ -45,45 +45,41 @@
   :cljsbuild
   {:builds
    {:min
-            {:source-paths ["src/cljs" "src/cljc" "env/prod/cljs"]
-             :compiler
-             {:output-to        "target/cljsbuild/public/js/app.js"
-              :output-dir       "target/cljsbuild/public/js"
-              :source-map       "target/cljsbuild/public/js/app.js.map"
-              :optimizations :advanced
-              :pretty-print  false}}
-            :app
-            {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-             :figwheel {:on-jsload "dota-stats.core/mount-root"}
-             :compiler
-             {:main "dota-stats.dev"
-              :asset-path "/js/out"
-              :output-to "target/cljsbuild/public/js/app.js"
-              :output-dir "target/cljsbuild/public/js/out"
-              :source-map true
-              :optimizations :none
-              :pretty-print  true}}
-
-            :test
-            {:source-paths ["src/cljs" "src/cljc" "spec/cljs"]
-             :compiler {:output-to "target/test.js"
-                        :optimizations :whitespace
-                        :pretty-print true}}
-
-            }
-   :test-commands {"unit" ["phantomjs" "runners/speclj" "target/test.js"]}
-   }
+    {:source-paths ["src/cljs" "src/cljc" "env/prod/cljs"]
+     :compiler
+     {:output-to        "target/cljsbuild/public/js/app.js"
+      :output-dir       "target/cljsbuild/public/js"
+      :source-map       "target/cljsbuild/public/js/app.js.map"
+      :optimizations :advanced
+      :pretty-print  false}}
+    
+    :app
+    {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+     :figwheel {:on-jsload "dota-stats.core/mount-root"}
+     :compiler
+     {:main "dota-stats.dev"
+      :asset-path "/js/out"
+      :output-to "target/cljsbuild/public/js/app.js"
+      :output-dir "target/cljsbuild/public/js/out"
+      :source-map true
+      :optimizations :none
+      :pretty-print  true}}
+    
+    :test
+    {:source-paths ["src/cljs" "src/cljc" "spec/cljs"]
+     :compiler {:output-to "target/test.js"
+                :optimizations :whitespace
+                :pretty-print true}}}
+   :test-commands {"unit" ["phantomjs" "runners/speclj" "target/test.js"]}}
   :doo {:build "test"}
-
- 
+  
   :figwheel
   {:http-server-root "public"
    :server-port 3449
    :nrepl-port 7002
    :nrepl-middleware [cider.piggieback/wrap-cljs-repl
                       cider.nrepl/cider-middleware
-                      refactor-nrepl.middleware/wrap-refactor
-                      ]
+                      refactor-nrepl.middleware/wrap-refactor]
    :css-dirs ["resources/public/css"]
    :ring-handler dota-stats.handler/app}
 
@@ -102,8 +98,7 @@
                                   [pjstadig/humane-test-output "0.9.0"]
                                   
                                   ;; To silence warnings from sass4clj dependecies about missing logger implementation
-                                  [org.slf4j/slf4j-nop "1.7.25"]
-                                  ]
+                                  [org.slf4j/slf4j-nop "1.7.25"]]
 
                    :source-paths ["env/dev/clj"]
                    :plugins [[lein-figwheel "0.5.18"]
