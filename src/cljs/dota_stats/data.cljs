@@ -12,8 +12,7 @@
 
 (defn get-matches [query]
   (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches?win=1")))]
-        (swap! state/app-state assoc-in [:wins] (map #(assoc % :result 1) (:body response)))))
-  (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches?win=0")))]
-        (swap! state/app-state assoc-in [:losses] (map #(assoc % :result 0) (:body response)))))
-  (swap! state/app-state assoc :state "winrate"))
-
+        (swap! state/app-state assoc-in [:wins] (map #(assoc % :result 1) (:body response))))
+      (go (let [response (<! (http/get (str "https://api.opendota.com/api/players/" query "/matches?win=0")))]
+            (swap! state/app-state assoc-in [:losses] (map #(assoc % :result 0) (:body response)))
+            (swap! state/app-state assoc :state "winrate")))))
