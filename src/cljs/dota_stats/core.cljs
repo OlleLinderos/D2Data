@@ -3,7 +3,35 @@
             [dota-stats.utility :as util]
             [dota-stats.data :as data]
             [reagent.core :as r]
-            [reagent.session :as session]))
+            [reagent.session :as session]
+            [cljsjs.chartjs]))
+
+(defn setup-winrate-chart []
+  (let [context (.getContext (.getElementById js/document "winrate-chart") "2d")
+        chart-data {:type "line"
+                    :options {:title {:display false
+                                      :text "Winrate over time"}
+                              :responsive true
+                              :scales {:yAxes [{:display true
+                                                :ticks {:min 0
+                                                        :max 100
+                                                        :stepSize 10}}]
+                                       :xAxes [{:display false
+                                                :unitStepSize 1
+                                                :ticks {:autoSkip false
+                                                        :beginAtZero true}}]}}
+                    :data {:labels [1 2 3 4 5 6]
+                           :datasets [{:label "Actual winrate"
+                                       :data [0 10 20 55]}
+                                      {:label "Derivate"
+                                       :data [0 90 55 0]}]}}]
+    (js/Chart. context (clj->js chart-data))))
+
+(defn winrate-chart []
+  (r/create-class
+   {:component-did-mount #(setup-winrate-chart)
+    :reagent-render (fn []
+                      [:canvas {:id "winrate-chart" :width "700" :height "380"}])}))    
 
 (defn username-input [value]
   [:input {:name "username"
@@ -25,7 +53,9 @@
        [:h2 "Find your profile"]
        [:form
         [username-input steam-username]
-        [:input {:type "button" :value "Search" :on-click #(data/get-steam-profiles @steam-username)}]]])))
+        [:input {:type "button"
+                 :value "Search"
+                 :on-click #(data/get-steam-profiles @steam-username)}]]])))
 
 (defn user-search-results []
   (fn []
@@ -42,7 +72,7 @@
 (defn matches-component []
   (fn []
     [:ol
-     (for [match (:matches @state/app-state)]
+     (for [match (util/merge-results (:wins @state/app-state) (:losses @state/app-state))]
        ^{:key match} [:li (str match)])]))
 
 (defn loading-component []
@@ -59,7 +89,7 @@
      (case (get @state/app-state :state)
        "search" [user-search-form]
        "users" [user-search-results]
-       "matches" [matches-component]
+       "winrate" [winrate-chart]
        "loading" [loading-component])]))
 
 (defn app []
