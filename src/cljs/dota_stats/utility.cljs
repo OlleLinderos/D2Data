@@ -15,17 +15,19 @@
   (sort-by :match_id (concat wins losses)))
 
 (defn to-percentage [wins total]
-  (* (/ wins total) 100))
+  (if (= 0 total wins) 0
+      (* (/ wins total) 100)))
 
 (defn calc-winrate [matches]
-  (loop [wins 0
-         i 1]
-    (if (= i (count matches))
-      (prn "hey")
-      (recur
-       (do
-         (inc wins)
-         (conj (to-percentage wins i) data)
-       (inc i))))))
+  (let [data (r/atom [])]
+    (loop [wins 0
+           total 0]
+      (if (= total (count matches))
+        @data
+        (recur (if (= (get (nth matches total) :result) 1)
+                 (inc wins))
+               (do
+                  (swap! data conj (to-percentage wins total))
+                  (inc total)))))))
 
 (calc-winrate [{:result 0} {:result 1} {:result 0} {:result 1} {:result 1}])
