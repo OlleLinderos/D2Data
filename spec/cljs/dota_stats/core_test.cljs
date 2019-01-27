@@ -36,6 +36,6 @@
 
 (describe "test home"
   (it "contains 'Welcome to' in home page"
-      (with-mounted-component (rc/home-page)
+      (with-mounted-component (rc/app)
         (fn [c div]
           (should (found-in #"Welcome to" div))))))
