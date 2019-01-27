@@ -16,16 +16,16 @@
 
 (defn calc-winrate [results]
   (into []
-   (let [running-win-totals
-         (->> results
-              (reductions (fn [acc {:keys [result]}]
-                            (if (pos? result) (inc acc) acc))
-                          0)
-              (rest))]
-     (sequence
-      (comp
-       (map-indexed (fn [round win-total] [win-total (inc round)]))
-       (map (partial apply /))
-       (map #(* 100 %))
-       (map float))
-      running-win-totals))))
+        (let [running-win-totals
+              (->> results
+                   (reductions (fn [acc {:keys [result]}]
+                                 (if (pos? result) (inc acc) acc))
+                               0)
+                   (rest))]
+          (sequence
+           (comp
+            (map-indexed (fn [round win-total] [win-total (inc round)]))
+            (map (partial apply /))
+            (map #(* 100 %))
+            (map float))
+           running-win-totals))))
