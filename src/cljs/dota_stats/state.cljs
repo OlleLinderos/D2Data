@@ -4,12 +4,11 @@
 (defonce app-state
   (r/atom {:state "search"
            :users []
-           :matches []
-           :match-wins []}))
+           :wins []
+           :losses []}))
 
 (defn reset-state []
   (swap! app-state assoc :state "search")
   (swap! app-state assoc :users [])
-  (swap! app-state assoc :matches [])
-  (swap! app-state assoc :match-wins []))
-
+  (swap! app-state assoc :wins [])
+  (swap! app-state assoc :losses []))
