@@ -46,19 +46,28 @@
   (let [context (.getContext (.getElementById js/document "winrate-chart") "2d")
         chart-data {:type "line"
                     :options {:responsive true
+                              
                               :scales {:yAxes [{:display true
                                                 :ticks {:min 0
                                                         :max 100
                                                         :stepSize 10}}]
                                        :xAxes [{:display false
                                                 :unitStepSize 1
-                                                :ticks {:autoSkip false
-                                                        :beginAtZero true}}]}}
-                    :data {:labels (vec (range (count (util/calc-winrate
-                                                       (util/merge-results
-                                                        (:wins @state/app-state) (:losses @state/app-state))))))
+                                                :ticks {:beginAtZero true
+                                                        :autoSkip false}}]}
+                              :legend {:display false}}
+                    :data {:labels (map #(str "Game #" (+ 1 %))
+                                        (vec
+                                         (range
+                                          (count
+                                           (util/calc-winrate
+                                            (util/merge-results
+                                             (:wins @state/app-state)
+                                             (:losses @state/app-state)))))))
                            :datasets [{:fill false
                                        :pointRadius 0
+                                       :pointHitRadius 5
+                                       :pointHoverBackgroundColor "#fff"
                                        :borderColor "#FF9900"
                                        :backgroundColor "#FF9900"
                                        :label "Winrate"
@@ -68,14 +77,10 @@
     (js/Chart. context (clj->js chart-data))))
 
 (defn winrate-chart []
-  (if (< 0
-         (count (util/calc-winrate
-                 (util/merge-results
-                  (:wins @state/app-state) (:losses @state/app-state)))))
-    (r/create-class
-     {:component-did-mount #(setup-winrate-chart)
-      :reagent-render (fn []
-                        [:canvas {:id "winrate-chart" :width "700" :height "380"}])})))
+  (r/create-class
+   {:component-did-mount #(setup-winrate-chart)
+    :reagent-render (fn []
+                      [:canvas {:id "winrate-chart" :width "900" :height "500"}])}))
 
 (defn loading-component []
   [:p "Loading"])
