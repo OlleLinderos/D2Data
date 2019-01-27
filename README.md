@@ -1,5 +1,5 @@
 # D2Data
-Fetch visualize histories for Dota 2 accounts
+Fetch and visualize histories for Dota 2 accounts
 
 ## Development 
 
