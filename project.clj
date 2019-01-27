@@ -15,6 +15,7 @@
                  [yogthos/config "1.1.1"]
                  [org.clojure/clojurescript "1.10.439"
                   :scope "provided"]
+                 [cljsjs/chartjs "2.7.3-0"]
                  [metosin/reitit "0.2.10"]]
 
   :plugins [[lein-environ "1.1.0"]
