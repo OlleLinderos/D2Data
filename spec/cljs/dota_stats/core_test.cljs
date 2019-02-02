@@ -39,3 +39,4 @@
       (with-mounted-component (rc/app)
         (fn [c div]
           (should (found-in #"D2Data" div))))))
+

@@ -46,7 +46,6 @@
   (let [context (.getContext (.getElementById js/document "winrate-chart") "2d")
         chart-data {:type "line"
                     :options {:responsive true
-                              
                               :scales {:yAxes [{:display true
                                                 :ticks {:min 0
                                                         :max 100
